@@ -3,7 +3,6 @@ import pandas as pd
 import math
 import cv2
 import imutils
-from google.colab.patches import cv2_imshow
 
 
 class Image2TimeSeries:
@@ -148,7 +147,7 @@ class Image2TimeSeries:
     def _img_show(self, img: np.ndarray, contour: np.ndarray, edge_coordinates: list[np.ndarray], center: tuple[float, float]) -> None:
         """
         Draw the raw image with contour, center of the shape on the image and rais from starting center
-
+    
         Parameters
         ----------
         img: raw image
@@ -156,15 +155,19 @@ class Image2TimeSeries:
         edge_coordinates: contour points
         center: object center
         """
-
+    
         cv2.drawContours(img, [contour], -1, (0, 255, 0), 6)
         cv2.circle(img, center, 7, (255, 255, 255), -1)
         cv2.putText(img, "center", (center[0]-20, center[1]-20),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 6)
         for i in range(len(edge_coordinates)):
             cv2.drawContours(img, np.array([[center, edge_coordinates[i]]]), -1, (255, 0, 255), 4)
-
-        cv2_imshow(imutils.resize(img, width=200))
+    
+        # Заменяем cv2_imshow на matplotlib для отображения
+        plt.figure(figsize=(6, 6))
+        plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        plt.axis('off')
+        plt.show()
 
 
     def convert(self, img: np.ndarray, is_visualize: bool = False) -> np.ndarray:
