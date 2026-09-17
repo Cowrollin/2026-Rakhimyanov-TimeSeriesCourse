@@ -160,7 +160,49 @@ def plot_bestmatch_results(ts: np.ndarray, query: np.ndarray, bestmatch_results:
     bestmatch_results: output data found by the best match algorithm
     """
 
-    # INSERT YOUR CODE
+    query_len = query.shape[0]
+    ts_len = ts.shape[0]
+
+    fig = make_subplots(rows=1, cols=2, column_widths=[0.1, 0.9],
+                        subplot_titles=("Query", "Time series with matches"),
+                        horizontal_spacing=0.04)
+
+    # Запрос (тот же цвет, что и в plot_bestmatch_data)
+    fig.add_trace(
+        go.Scatter(x=np.arange(query_len), y=query,
+                   line=dict(color=px.colors.qualitative.Plotly[1])),
+        row=1, col=1)
+
+    # Ряд
+    fig.add_trace(
+        go.Scatter(x=np.arange(ts_len), y=ts,
+                   line=dict(color=px.colors.qualitative.Plotly[0]),
+                   name='Time series'),
+        row=1, col=2)
+
+    # Подсветка каждой найденной подпоследовательности
+    for idx in bestmatch_results['indices']:
+        match = ts[idx: idx + query_len]
+        fig.add_trace(
+            go.Scatter(x=np.arange(idx, idx + query_len), y=match,
+                       line=dict(color=px.colors.qualitative.Plotly[1], width=4),
+                       showlegend=False),
+            row=1, col=2)
+
+    fig.update_annotations(font=dict(size=24, color='black'))
+    fig.update_xaxes(showgrid=False, linecolor='#000', ticks="outside",
+                     tickfont=dict(size=18, color='black'),
+                     linewidth=1, tickwidth=1, mirror=True)
+    fig.update_yaxes(showgrid=False, linecolor='#000', ticks="outside",
+                     tickfont=dict(size=18, color='black'),
+                     zeroline=False, linewidth=1, tickwidth=1, mirror=True)
+
+    fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
+                      paper_bgcolor='rgba(0,0,0,0)',
+                      showlegend=False,
+                      title_x=0.5)
+
+    fig.show()
 
 
 def pie_chart(labels: np.ndarray, values: np.ndarray, plot_title='Pie chart') -> None:
@@ -183,4 +225,4 @@ def pie_chart(labels: np.ndarray, values: np.ndarray, plot_title='Pie chart') ->
                       height=500
                       )
 
-    fig.show(renderer="colab")
+    fig.show()
